@@ -26,7 +26,7 @@ def sockMerchant(n, ar):
 
 # Complete the rotLeft function below.
 def rotLeft(a, d):
-    r = d % len(a) # optimizing number of slice rotations
+    # r = d % len(a) # optimizing number of slice rotations
     return a[d:]+a[:d]
 
 def right_rotation(a, k):
