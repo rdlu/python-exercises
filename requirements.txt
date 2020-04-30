@@ -2,3 +2,4 @@ numpy
 sqlalchemy
 pandas
 psycopg2
+pytest~=5.4.1
