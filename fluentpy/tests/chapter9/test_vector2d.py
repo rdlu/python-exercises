@@ -65,6 +65,7 @@ class TestVector2d:
         # x and y must be read only
         with pytest.raises(AttributeError):  # as e_info:
             self.v1.x = 1
+        with pytest.raises(AttributeError):
             self.v1.y = 2
 
     def test_hashing(self):
