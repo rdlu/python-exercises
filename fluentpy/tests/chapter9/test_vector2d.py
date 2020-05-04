@@ -1,6 +1,7 @@
-import fluentpy.chapter9.vector2d as v2d
 import math
 import pytest
+
+import fluentpy.chapter9.vector2d as v2d
 
 
 class TestVector2d:
