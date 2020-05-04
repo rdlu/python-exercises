@@ -9,6 +9,19 @@ class TestVector:
     v2 = v.Vector((3, 4, 5))
     v3 = v.Vector(range(10))
 
+    def test_iter_matching(self):
+        x, y = self.v1
+        assert (x, y) == (3.1, 4.2), \
+            'matches two members'
+
+        p, q, r = self.v2
+        assert (p, q, r) == (3.0, 4.0, 5.0), \
+            'matches three members'
+
+        first, *rest = self.v3
+        assert (first, rest) == (0, list(range(1, 10))), \
+            'matches ranges and unpacking'
+
     def test_repr(self):
         assert repr(self.v1) == 'Vector([3.1, 4.2])', \
             'object is represented for base float case'
