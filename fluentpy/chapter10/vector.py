@@ -74,6 +74,17 @@ class Vector:
     def __bool__(self):
         return bool(abs(self))
 
+    shortcut_names = 'xyzt'
+
+    def __getattr__(self, name):
+        cls = type(self)
+        if len(name) == 1:
+            pos = cls.shortcut_names.find(name)
+            if 0 <= pos < len(self._components):
+                return self._components[pos]
+            msg = '{.__name__!r} object has no attribute {!r}'
+            raise AttributeError(msg.format(cls, name))
+
     def __bytes__(self):
         return bytes([ord(self.typecode)]) + bytes(self._components)
 

@@ -1,6 +1,3 @@
-import math
-import random
-
 import pytest
 
 import fluentpy.chapter10.vector as v
@@ -110,3 +107,12 @@ class TestVector:
             'bool conversion must evaluate False on zero vectors'
         assert all([bool(self.v1), bool(self.v2), bool(self.v3), bool(self.v4)]), \
             'bool must be True otherwise'
+
+    def test_component_shortcuts(self):
+        assert self.v3.x == 0.0
+        assert self.v3.y == 1.0
+        assert self.v3.z == 2.0
+        assert self.v3.t == 3.0
+
+        with pytest.raises(AttributeError):
+            x = self.v3.k
