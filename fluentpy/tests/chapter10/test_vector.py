@@ -22,6 +22,13 @@ class TestVector:
         assert self.v1 == v1_clone, \
             'repr must be evaluated'
 
+    def test_len(self):
+        assert len(self.v1) == 2
+        assert len(self.v3) == 10
+
     def test_frombytes(self):
         v1_clone = v.Vector.frombytes(bytes(self.v1))
         assert v1_clone == self.v1
+
+    def test_get_item(self):
+        assert (self.v2[0], self.v2[len(self.v2) - 1], self.v2[-1]) == (3.0, 5.0, 5.0)

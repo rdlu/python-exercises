@@ -25,6 +25,9 @@ class Vector:
     def __len__(self):
         return len(self._components)
 
+    def __getitem__(self, index):
+        return self._components[index]
+
     # def __hash__(self):
     #     hashes = (hash(x) for x in self)
     #     return functools.reduce(operator.xor, hashes, 0)
