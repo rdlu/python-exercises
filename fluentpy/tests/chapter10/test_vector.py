@@ -104,3 +104,9 @@ class TestVector:
             'n-sphere format with all zeroes components'
         assert format(v.Vector((-1, -1)), '0.2fh') == '<1.41, 3.93>', \
             'n-sphere format with negative numbers, angles use a different rule'
+
+    def test_bool(self):
+        assert all(not bool(vector) for vector in self.zero_vectors), \
+            'bool conversion must evaluate False on zero vectors'
+        assert all([bool(self.v1), bool(self.v2), bool(self.v3), bool(self.v4)]), \
+            'bool must be True otherwise'

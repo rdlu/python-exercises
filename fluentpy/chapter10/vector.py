@@ -71,6 +71,9 @@ class Vector:
     def __abs__(self):
         return math.sqrt(sum(x ** 2 for x in self))
 
+    def __bool__(self):
+        return bool(abs(self))
+
     def __bytes__(self):
         return bytes([ord(self.typecode)]) + bytes(self._components)
 
