@@ -21,3 +21,7 @@ class TestVector:
         v1_clone = eval('v.' + repr(self.v1))
         assert self.v1 == v1_clone, \
             'repr must be evaluated'
+
+    def test_frombytes(self):
+        v1_clone = v.Vector.frombytes(bytes(self.v1))
+        assert v1_clone == self.v1

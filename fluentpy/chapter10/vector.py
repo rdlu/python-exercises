@@ -28,3 +28,12 @@ class Vector:
     # def __hash__(self):
     #     hashes = (hash(x) for x in self)
     #     return functools.reduce(operator.xor, hashes, 0)
+
+    def __bytes__(self):
+        return bytes([ord(self.typecode)]) + bytes(self._components)
+
+    @classmethod
+    def frombytes(cls, octets):
+        typecode = chr(octets[0])
+        memv = memoryview(octets[1:]).cast(typecode)
+        return cls(memv)
