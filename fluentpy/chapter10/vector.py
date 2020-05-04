@@ -1,4 +1,5 @@
 import functools
+import numbers
 import operator
 from array import array
 import reprlib
@@ -26,7 +27,14 @@ class Vector:
         return len(self._components)
 
     def __getitem__(self, index):
-        return self._components[index]
+        cls = type(self)
+        if isinstance(index, slice):
+            return cls(self._components[index])
+        elif isinstance(index, numbers.Integral):
+            return self._components[index]
+        else:
+            msg = '{.__name__} indices must be integers'
+            raise TypeError(msg.format(cls))
 
     # def __hash__(self):
     #     hashes = (hash(x) for x in self)

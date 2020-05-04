@@ -30,7 +30,7 @@ class TestVector:
         assert repr(self.v3) == 'Vector([0.0, 1.0, 2.0, 3.0, 4.0, ...])', \
             'object is represented for ranges'
 
-    def test_clone_eval(self):
+    def test_clone_eval_eq(self):
         v1_clone = eval('v.' + repr(self.v1))
         assert self.v1 == v1_clone, \
             'repr must be evaluated'
@@ -41,7 +41,19 @@ class TestVector:
 
     def test_frombytes(self):
         v1_clone = v.Vector.frombytes(bytes(self.v1))
-        assert v1_clone == self.v1
+        assert v1_clone == self.v1, \
+            'object can be serialized in bytes and reversed frombytes'
 
     def test_get_item(self):
-        assert (self.v2[0], self.v2[len(self.v2) - 1], self.v2[-1]) == (3.0, 5.0, 5.0)
+        assert (self.v2[0], self.v2[len(self.v2) - 1], self.v2[-1]) == (3.0, 5.0, 5.0), \
+            'we can get items using brackets [] notation'
+
+    def test_slicing(self):
+        assert self.v3[1:4] == v.Vector([1.0, 2.0, 3.0]), \
+            'we can slice with positive numbers'
+
+        assert self.v3[-1:] == v.Vector([9]), \
+            'we can slice negative ranges'
+
+        with pytest.raises(TypeError):
+            x = self.v3[1, 2]  # we dont support multidimensions here
