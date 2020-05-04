@@ -10,8 +10,9 @@ class TestVector:
     v1 = v.Vector([3.1, 4.2])
     v2 = v.Vector((3, 4, 5))
     v3 = v.Vector(range(10))
+    v4 = v.Vector([1, 1])
     zero_vectors = []  # zeroed vectors
-    for i in (0, 1, 1000):
+    for i in (0, 3, 1000):
         zero_vectors.append(v.Vector([0] * i))
 
     def test_iter_matching(self):
@@ -91,3 +92,15 @@ class TestVector:
             'format for empty vector'
         assert format(self.v3) == '(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)', \
             'format for a range'
+
+    def test_format_sphere(self):
+        assert format(self.v4, 'h') == '<1.4142135623730951, 0.7853981633974483>', \
+            'n-sphere format for 2 components'
+        assert format(self.v4, '.3eh') == '<1.414e+00, 7.854e-01>', \
+            'n-sphere format for 2 components, with 3 decimals cientific'
+        assert format(self.v4, '0.5fh') == '<1.41421, 0.78540>', \
+            'n-sphere format for 2 components, with 5 decimals rounded'
+        assert format(self.zero_vectors[1], '0.5fh') == '<0.00000, 0.00000, 0.00000>', \
+            'n-sphere format with all zeroes components'
+        assert format(v.Vector((-1, -1)), '0.2fh') == '<1.41, 3.93>', \
+            'n-sphere format with negative numbers, angles use a different rule'
