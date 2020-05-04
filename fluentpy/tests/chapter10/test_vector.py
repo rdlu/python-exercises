@@ -1,4 +1,6 @@
 import math
+import random
+
 import pytest
 
 import fluentpy.chapter10.vector as v
@@ -8,6 +10,9 @@ class TestVector:
     v1 = v.Vector([3.1, 4.2])
     v2 = v.Vector((3, 4, 5))
     v3 = v.Vector(range(10))
+    zero_vectors = []  # zeroed vectors
+    for i in (0, 1, 1000):
+        zero_vectors.append(v.Vector([0] * i))
 
     def test_iter_matching(self):
         x, y = self.v1
@@ -67,3 +72,10 @@ class TestVector:
             'hash must be the same for the same vector components, using floats instead integers'
         assert hash(self.v1) != hash(self.v3), \
             'hash must be different for different components'
+
+    def test_abs(self):
+        for zero_vector in self.zero_vectors:
+            assert abs(zero_vector) == 0, \
+                'abs is 1 on zeroed components {}'.format(zero_vector)
+        assert abs(self.v2) == 7.0710678118654755, \
+            'abs test for a known value'

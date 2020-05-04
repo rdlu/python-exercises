@@ -1,4 +1,5 @@
 import functools
+import math
 import numbers
 import operator
 import reprlib
@@ -41,6 +42,9 @@ class Vector:
     def __hash__(self):
         hashes = (hash(x) for x in self)
         return functools.reduce(operator.xor, hashes, 0)
+
+    def __abs__(self):
+        return math.sqrt(sum(x ** 2 for x in self))
 
     def __bytes__(self):
         return bytes([ord(self.typecode)]) + bytes(self._components)
