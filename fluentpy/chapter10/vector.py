@@ -1,9 +1,8 @@
 import functools
 import numbers
 import operator
-from array import array
 import reprlib
-import math
+from array import array
 
 
 class Vector:
@@ -36,9 +35,12 @@ class Vector:
             msg = '{.__name__} indices must be integers'
             raise TypeError(msg.format(cls))
 
-    # def __hash__(self):
-    #     hashes = (hash(x) for x in self)
-    #     return functools.reduce(operator.xor, hashes, 0)
+    def __str__(self):
+        return str(tuple(self))
+
+    def __hash__(self):
+        hashes = (hash(x) for x in self)
+        return functools.reduce(operator.xor, hashes, 0)
 
     def __bytes__(self):
         return bytes([ord(self.typecode)]) + bytes(self._components)
@@ -46,5 +48,5 @@ class Vector:
     @classmethod
     def frombytes(cls, octets):
         typecode = chr(octets[0])
-        memv = memoryview(octets[1:]).cast(typecode)
-        return cls(memv)
+        mem_view = memoryview(octets[1:]).cast(typecode)
+        return cls(mem_view)

@@ -56,4 +56,14 @@ class TestVector:
             'we can slice negative ranges'
 
         with pytest.raises(TypeError):
-            x = self.v3[1, 2]  # we dont support multidimensions here
+            x = self.v3[1, 2]  # we dont support multidimensional
+
+    def test_str(self):
+        assert str(self.v1) == '(3.1, 4.2)'
+        assert str(self.v2) == '(3.0, 4.0, 5.0)'
+
+    def test_hashing(self):
+        assert hash(self.v2) == hash(v.Vector([3.0, 4.0, 5.0])), \
+            'hash must be the same for the same vector components, using floats instead integers'
+        assert hash(self.v1) != hash(self.v3), \
+            'hash must be different for different components'
