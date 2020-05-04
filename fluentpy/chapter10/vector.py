@@ -39,6 +39,11 @@ class Vector:
     def __str__(self):
         return str(tuple(self))
 
+    def __format__(self, format_spec=''):
+        outer_format = '({})'
+        components = (format(component, format_spec) for component in self)
+        return outer_format.format(', '.join(components))
+
     def __hash__(self):
         hashes = (hash(x) for x in self)
         return functools.reduce(operator.xor, hashes, 0)

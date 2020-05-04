@@ -79,3 +79,15 @@ class TestVector:
                 'abs is 1 on zeroed components {}'.format(zero_vector)
         assert abs(self.v2) == 7.0710678118654755, \
             'abs test for a known value'
+
+    def test_format(self):
+        assert format(self.v2) == '(3.0, 4.0, 5.0)', \
+            'format without params, 3 components'
+        assert format(self.v1, '.2f') == '(3.10, 4.20)', \
+            'format 2 decimal places'
+        assert format(self.v1, '.3e') == '(3.100e+00, 4.200e+00)', \
+            'format cientific exp mode'
+        assert format(self.zero_vectors[0]) == '()', \
+            'format for empty vector'
+        assert format(self.v3) == '(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)', \
+            'format for a range'
