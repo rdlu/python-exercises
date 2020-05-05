@@ -11,7 +11,7 @@ class TestVector:
     zero_vectors = [v.Vector([0] * i) for i in (0, 3, 1000)]
 
     @pytest.fixture(params=zero_vectors)
-    def test_zero_vectors(self, request):
+    def fixture_zero_vectors(self, request):
         return request.param
 
     def test_iter_matching(self):
@@ -27,13 +27,15 @@ class TestVector:
         assert (first, rest) == (0, list(range(1, 10))), \
             'matches ranges and unpacking'
 
-    def test_repr(self):
-        assert repr(self.v1) == 'Vector([3.1, 4.2])', \
-            'object is represented for base float case'
-        assert repr(self.v2) == 'Vector([3.0, 4.0, 5.0])', \
-            'object is represented for integers and tuples'
-        assert repr(self.v3) == 'Vector([0.0, 1.0, 2.0, 3.0, 4.0, ...])', \
-            'object is represented for ranges'
+    repr_test_data = [
+        (v1, 'Vector([3.1, 4.2])', 'object is represented for base float case'),
+        (v2, 'Vector([3.0, 4.0, 5.0])', 'object is represented for integers and tuples'),
+        (v3, 'Vector([0.0, 1.0, 2.0, 3.0, 4.0, ...])', 'object is represented for ranges')
+    ]
+
+    @pytest.mark.parametrize("vector,representation,msg", repr_test_data)
+    def test_repr(self, vector, representation, msg):
+        assert repr(vector) == representation, msg
 
     def test_clone_eval_eq(self):
         v1_clone = eval('v.' + repr(self.v1))
@@ -73,9 +75,9 @@ class TestVector:
         assert hash(self.v1) != hash(self.v3), \
             'hash must be different for different components'
 
-    def test_abs_zero(self, test_zero_vectors):
-        assert abs(test_zero_vectors) == 0, \
-                'abs is 1 on zeroed components {}'.format(test_zero_vectors)
+    def test_abs_zero(self, fixture_zero_vectors):
+        assert abs(fixture_zero_vectors) == 0, \
+                'abs is 1 on zeroed components {}'.format(fixture_zero_vectors)
 
     def test_abs_non_zero(self):
         assert abs(self.v2) == 7.0710678118654755, \
@@ -105,8 +107,8 @@ class TestVector:
         assert format(v.Vector((-1, -1)), '0.2fh') == '<1.41, 3.93>', \
             'n-sphere format with negative numbers, angles use a different rule'
 
-    def test_bool_false(self, test_zero_vectors):
-        assert not bool(test_zero_vectors), \
+    def test_bool_false(self, fixture_zero_vectors):
+        assert not bool(fixture_zero_vectors), \
             'bool conversion must evaluate False on zero vectors'
 
     def test_bool_true(self):
