@@ -8,9 +8,11 @@ class TestVector:
     v2 = v.Vector((3, 4, 5))
     v3 = v.Vector(range(10))
     v4 = v.Vector([1, 1])
-    zero_vectors = []  # zeroed vectors
-    for i in (0, 3, 1000):
-        zero_vectors.append(v.Vector([0] * i))
+    zero_vectors = [v.Vector([0] * i) for i in (0, 3, 1000)]
+
+    @pytest.fixture(params=zero_vectors)
+    def test_zero_vectors(self, request):
+        return request.param
 
     def test_iter_matching(self):
         x, y = self.v1
@@ -71,10 +73,11 @@ class TestVector:
         assert hash(self.v1) != hash(self.v3), \
             'hash must be different for different components'
 
-    def test_abs(self):
-        for zero_vector in self.zero_vectors:
-            assert abs(zero_vector) == 0, \
-                'abs is 1 on zeroed components {}'.format(zero_vector)
+    def test_abs_zero(self, test_zero_vectors):
+        assert abs(test_zero_vectors) == 0, \
+                'abs is 1 on zeroed components {}'.format(test_zero_vectors)
+
+    def test_abs_non_zero(self):
         assert abs(self.v2) == 7.0710678118654755, \
             'abs test for a known value'
 
@@ -102,9 +105,11 @@ class TestVector:
         assert format(v.Vector((-1, -1)), '0.2fh') == '<1.41, 3.93>', \
             'n-sphere format with negative numbers, angles use a different rule'
 
-    def test_bool(self):
-        assert all(not bool(vector) for vector in self.zero_vectors), \
+    def test_bool_false(self, test_zero_vectors):
+        assert not bool(test_zero_vectors), \
             'bool conversion must evaluate False on zero vectors'
+
+    def test_bool_true(self):
         assert all([bool(self.v1), bool(self.v2), bool(self.v3), bool(self.v4)]), \
             'bool must be True otherwise'
 
