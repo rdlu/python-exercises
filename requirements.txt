@@ -3,3 +3,11 @@ sqlalchemy
 pandas
 psycopg2
 pytest~=5.4.1
+yfinance~=0.1
+jupyter~=1.0
+lxml~=4.5
+html5lib~=1.0
+beautifulsoup4~=4.9
+requests>=2.23.0
+pandas-datareader~=0.8
+pyspark
