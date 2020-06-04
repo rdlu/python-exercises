@@ -1,3 +1,5 @@
+import seaborn as sns
+
 # Inspect unique values in the column 'ASSUMABLEMORTGAGE'
 df.select(['ASSUMABLEMORTGAGE']).distinct().show()
 
