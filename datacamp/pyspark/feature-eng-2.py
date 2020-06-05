@@ -163,3 +163,89 @@ split_date = train_test_split_date(df, 'OFFMKTDATE')
 # Create Sequential Test and Training Sets
 train_df = df.where(df['OFFMKTDATE'] < split_date) 
 test_df = df.where(df['OFFMKTDATE'] >= split_date).where(df['LISTDATE'] <= split_date) 
+
+
+
+
+from pyspark.sql.functions import datediff, to_date, lit
+
+### lit() function. This function is used to allow single values where an entire column is expected in a function call.
+split_date = to_date(lit('2017-12-10'))
+# Create Sequential Test set
+test_df = df.where(df['OFFMKTDATE'] >= split_date).where(df['LISTDATE'] <= split_date)
+
+# Create a copy of DAYSONMARKET to review later
+test_df = test_df.withColumn('DAYSONMARKET_Original', test_df['DAYSONMARKET'])
+
+# Recalculate DAYSONMARKET from what we know on our split date
+test_df = test_df.withColumn('DAYSONMARKET', datediff(split_date, df['LISTDATE']))
+
+# Review the difference
+test_df[['LISTDATE', 'OFFMKTDATE', 'DAYSONMARKET_Original', 'DAYSONMARKET']].show()
+
+# Replace missing values
+df = df.fillna(-1, subset=['WALKSCORE', 'BIKESCORE'])
+
+# Create list of StringIndexers using list comprehension
+indexers = [StringIndexer(inputCol=col, outputCol=col+"_IDX")\
+            .setHandleInvalid("keep") for col in categorical_cols]
+# Create pipeline of indexers
+indexer_pipeline = Pipeline(stages=indexers)
+# Fit and Transform the pipeline to the original data
+df_indexed = indexer_pipeline.fit(df).transform(df)
+
+# Clean up redundant columns
+df_indexed = df_indexed.drop(*categorical_cols)
+# Inspect data transformations
+print(df_indexed.dtypes)
+
+from pyspark.ml.regression import GBTRegressor
+
+# Train a Gradient Boosted Trees (GBT) model.
+gbt = GBTRegressor(featuresCol='features',
+                           labelCol='SALESCLOSEPRICE',
+                           predictionCol="Prediction_Price",
+                           seed=42
+                           )
+
+# Train model.
+model = gbt.fit(train_df)
+
+
+from pyspark.ml.evaluation import RegressionEvaluator
+
+# Select columns to compute test error
+evaluator = RegressionEvaluator(labelCol='SALESCLOSEPRICE', 
+                                predictionCol='Prediction_Price')
+# Dictionary of model predictions to loop over
+models = {'Gradient Boosted Trees': gbt_predictions, 'Random Forest Regression': rfr_predictions}
+for key, preds in models.items():
+  # Create evaluation metrics
+  rmse = evaluator.evaluate(preds, {evaluator.metricName: 'rmse'})
+  r2 = evaluator.evaluate(preds, {evaluator.metricName: 'r2'})
+  
+  # Print Model Metrics
+  print(key + ' RMSE: ' + str(rmse))
+  print(key + ' R^2: ' + str(r2))
+
+importances = model.featureImportances.toArray()
+  # Convert feature importances to a pandas column
+fi_df = pd.DataFrame(importances, columns=['importance'])
+
+# Convert list of feature names to pandas column
+fi_df['feature'] = pd.Series(feature_cols)
+
+# Sort the data based on feature importance
+fi_df.sort_values(by=['importance'], ascending=False, inplace=True)
+
+# Inspect Results
+fi_df.head(10)
+
+
+from pyspark.ml.regression import RandomForestRegressionModel
+
+# Save model
+model.save('rfr_no_listprice')
+
+# Load model
+loaded_model = RandomForestRegressionModel.load('rfr_no_listprice')
